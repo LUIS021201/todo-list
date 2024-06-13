@@ -20,25 +20,56 @@ function App() {
       };
       return [...prevTodos, newTodo];
     });
+    setInputValue("");
   };
 
   const handlerInputChange: ChangeEventHandler<HTMLInputElement> = (event) => {
     setInputValue(event.target.value);
   };
 
+  const handlerDelete = (idDeleted: number) => {
+    setTodos((prevTodos) => {
+      return prevTodos.filter((todo) => todo.id !== idDeleted);
+    });
+  };
+
   return (
-    <main>
-      <h1>Luis's ToDo List</h1>
-      <form onSubmit={handlerSubmit}>
-        <input type="text" value={inputValue} onChange={handlerInputChange} />
-        <button type="submit">Submit</button>
-      </form>
-      <h2>My ToDos</h2>
-      <ul className="list-inside list-disc">
-        {todos.map((todo) => (
-          <li key={todo.id}>{todo.title}</li>
-        ))}
-      </ul>
+    <main className="flex w-full h-screen flex-col bg-green-500 p-2 gap-2">
+      <h1 className="text-2xl font-semibold text-center">Luis's ToDo List</h1>
+      <div className="rounded-md bg-green-700 h-screen">
+        <div className="flex w-full items-center gap-4 p-2">
+          <h2 className="text-xl font-medium whitespace-nowrap">My ToDos</h2>
+          <form
+            className="flex w-full items-center gap-2"
+            onSubmit={handlerSubmit}
+          >
+            <input
+              type="text"
+              value={inputValue}
+              onChange={handlerInputChange}
+              className="flex-grow"
+            />
+            <button type="submit">Submit</button>
+          </form>
+        </div>
+        <div className="p-2 flex-grow h-full rounded-md">
+          <ul className="list-inside list-disc">
+            {todos.map((todo) => (
+              <li key={todo.id}>
+                <span>{todo.title}</span>
+                <button
+                  className="bg-[#e91e63]"
+                  onClick={() => {
+                    handlerDelete(todo.id);
+                  }}
+                >
+                  Delete
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
     </main>
   );
 }

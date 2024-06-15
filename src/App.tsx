@@ -1,4 +1,10 @@
-import { ChangeEventHandler, FormEventHandler, useState } from "react";
+import {
+  ChangeEventHandler,
+  FormEventHandler,
+  useEffect,
+  useState,
+} from "react";
+import { Button } from "./components/buttons/button";
 
 interface Todo {
   id: number;
@@ -21,6 +27,10 @@ function App() {
     setTodos(slicedTodos);
   };
 
+  useEffect(() => {
+    fetchTodos();
+  }, []);
+
   const handlerSubmit: FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
 
@@ -31,7 +41,7 @@ function App() {
         completed: false,
         userId: 1,
       };
-      return [...prevTodos, newTodo];
+      return [newTodo, ...prevTodos];
     });
     setInputValue("");
   };
@@ -45,8 +55,6 @@ function App() {
       return prevTodos.filter((todo) => todo.id !== idDeleted);
     });
   };
-
-  fetchTodos();
 
   return (
     <main className="flex w-full h-screen flex-col bg-green-700 p-2 gap-2">
@@ -64,28 +72,17 @@ function App() {
               onChange={handlerInputChange}
               className="flex-grow rounded-md bg-green-300 p-1"
             />
-            <button className="bg-green-700 rounded-md p-1" type="submit">
-              Submit
-            </button>
+            <Button>Submit</Button>
           </form>
         </div>
         <div className="p-2 flex-grow h-full rounded-md ">
           <ul className="flex flex-col list-inside list-disc  gap-2">
             {todos.map((todo) => (
-              <li
+              <TodoItem
                 key={todo.id}
-                className="px-2 py-1 flex justify-between bg-green-900 rounded-md items-center "
-              >
-                <span>{todo.title}</span>
-                <button
-                  className="bg-[#e91e63] rounded-md p-1"
-                  onClick={() => {
-                    handlerDelete(todo.id);
-                  }}
-                >
-                  Delete
-                </button>
-              </li>
+                todo={todo}
+                handleDelete={handlerDelete}
+              />
             ))}
           </ul>
         </div>
@@ -93,5 +90,27 @@ function App() {
     </main>
   );
 }
+
+interface Props {
+  todo: Todo;
+  handleDelete: (id: number) => void;
+}
+
+const TodoItem: React.FC<Props> = ({ todo, handleDelete }) => {
+  return (
+    <li
+      key={todo.id}
+      className="px-2 py-1 flex justify-between bg-green-900 rounded-md items-center "
+    >
+      <span>{todo.title}</span>
+      <Button
+        onClick={() => handleDelete(todo.id)}
+        backgroundcolor="bg-red-500"
+      >
+        Delete
+      </Button>
+    </li>
+  );
+};
 
 export default App;
